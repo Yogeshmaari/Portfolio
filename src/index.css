@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-display: "Sora", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Consolas, monospace;
+
+  --color-accent-a: #4f46e5;
+  --color-accent-a-dark: #9490f7;
+  --color-accent-b: #9a5b0a;
+  --color-accent-b-dark: #e5a94f;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+body {
+  font-family: var(--font-body);
+}
+
+/* A short, one-time entrance animation that plays as each section mounts.
+   Uses `both` fill-mode so content sits at its start frame for an instant
+   then settles — it is never left invisible waiting on a scroll listener
+   or IntersectionObserver, so it can't get stuck hidden if JS is slow,
+   blocked, or the element is already off-screen at load. */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal {
+  animation: fade-in-up 0.6s ease-out both;
+}
+
+/* Printing (or "Save as PDF" from the browser) always uses the light palette,
+   regardless of the viewer's theme — see the beforeprint/afterprint handling
+   in App.tsx, which strips the `.dark` class for the duration of printing so
+   every `dark:` utility is correctly bypassed, not just a hand-picked list.
+   This stylesheet only handles what that toggle doesn't: dropping shadows
+   and showing link URLs. Interactive-only elements are hidden via
+   `print:hidden` directly in the components. */
+@media print {
+  html {
+    color-scheme: light;
+  }
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75em;
+    color: #475569;
+  }
+  .shadow-lg,
+  .hover\:shadow-lg {
+    box-shadow: none !important;
+  }
+}
